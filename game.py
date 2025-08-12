@@ -3,15 +3,12 @@ import sys
 import random
 import os
 
-# Initialize Pygame
 pygame.init()
 
-# Set up display
 WIDTH, HEIGHT = 1280, 720
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("game")
 
-# Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -22,11 +19,9 @@ CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 PURPLE = (150, 0, 150)
 
-# Fonts
 font = pygame.font.SysFont(None, 40)
 small_font = pygame.font.SysFont(None, 25)
 
-# Game variables
 player_size = 50
 player_speed = 15
 enemy_size = 50
@@ -106,13 +101,13 @@ def draw_boss(surface, pos, health, max_health):
     pygame.draw.rect(surface, GREEN, (pos[0], pos[1] - 15, health_bar_width * health_ratio, health_bar_height))
 
 def game_loop(high_score, two_player=False):
-    # Initialize players positions
+    
     player1_pos = [WIDTH // 4, HEIGHT // 2]
     player2_pos = [WIDTH * 3 // 4, HEIGHT // 2]
 
     powered_up1 = False
     powered_up2 = False
-    power_up_duration = 5000  # milliseconds
+    power_up_duration = 5000  
     power_up_end_time1 = 0
     power_up_end_time2 = 0
 
@@ -129,22 +124,21 @@ def game_loop(high_score, two_player=False):
 
     power_up_pos = [random.randint(0, WIDTH - power_up_size), random.randint(0, HEIGHT - power_up_size)]
     power_up_visible = True
-    power_up_respawn_time = 7000  # milliseconds
+    power_up_respawn_time = 7000  
     power_up_last_collected = 0
 
     score = 0
     level = 1
-    level_up_interval = 30000  # milliseconds = 30 seconds
+    level_up_interval = 30000 
     last_level_up_time = pygame.time.get_ticks()
 
-    # Boss fight variables
     global boss_size
     boss_active = False
     boss_health = 20
     boss_size = 100
     boss_pos = [WIDTH // 2 - boss_size // 2, 50]
     boss_speed = 2
-    boss_direction = 1  # 1 = right, -1 = left
+    boss_direction = 1  
 
     boss_projectiles = []
     projectile_size = 10
@@ -163,7 +157,7 @@ def game_loop(high_score, two_player=False):
                 sys.exit()
 
         keys = pygame.key.get_pressed()
-        # Player 1 controls - Arrows
+      
         if keys[pygame.K_LEFT]:
             player1_pos[0] -= player_speed
         if keys[pygame.K_RIGHT]:
@@ -173,7 +167,7 @@ def game_loop(high_score, two_player=False):
         if keys[pygame.K_DOWN]:
             player1_pos[1] += player_speed
 
-        # Player 2 controls - WASD
+      
         if two_player:
             if keys[pygame.K_a]:
                 player2_pos[0] -= player_speed
@@ -184,31 +178,31 @@ def game_loop(high_score, two_player=False):
             if keys[pygame.K_s]:
                 player2_pos[1] += player_speed
 
-        # Clamp positions inside screen
+       
         player1_pos[0] = max(0, min(WIDTH - player_size, player1_pos[0]))
         player1_pos[1] = max(0, min(HEIGHT - player_size, player1_pos[1]))
         player2_pos[0] = max(0, min(WIDTH - player_size, player2_pos[0]))
         player2_pos[1] = max(0, min(HEIGHT - player_size, player2_pos[1]))
 
-        # Level up check
+    
         if current_time - last_level_up_time > level_up_interval:
             level += 1
             last_level_up_time = current_time
-            enemy_speed += 1  # Increase speed
+            enemy_speed += 1 
             if len(enemies) < max_enemies:
                 x = random.randint(0, WIDTH - enemy_size)
                 y = random.randint(0, HEIGHT - enemy_size)
                 direction = random.choice(['left', 'right', 'up', 'down'])
                 enemies.append({'pos': [x, y], 'dir': direction})
 
-        # Activate boss at level 5
+        
         if level >= 5 and not boss_active:
             boss_active = True
             boss_health = 20
             boss_pos = [WIDTH // 2 - boss_size // 2, 50]
             boss_projectiles.clear()
 
-        # Move enemies
+      
         for enemy in enemies:
             x, y = enemy['pos']
             d = enemy['dir']
@@ -239,7 +233,7 @@ def game_loop(high_score, two_player=False):
         player1_rect = pygame.Rect(player1_pos[0], player1_pos[1], player_size, player_size)
         player2_rect = pygame.Rect(player2_pos[0], player2_pos[1], player_size, player_size)
 
-        # Check collision with enemies
+   
         for enemy in enemies:
             enemy_rect = pygame.Rect(enemy['pos'][0], enemy['pos'][1], enemy_size, enemy_size)
             if player1_rect.colliderect(enemy_rect):
@@ -253,7 +247,7 @@ def game_loop(high_score, two_player=False):
 
         power_up_rect = pygame.Rect(power_up_pos[0], power_up_pos[1], power_up_size, power_up_size)
 
-        # Check power-up pickup - affects both players
+     
         if power_up_visible and (player1_rect.colliderect(power_up_rect) or (two_player and player2_rect.colliderect(power_up_rect))):
             powered_up1 = True
             powered_up2 = True
@@ -380,3 +374,4 @@ def show_game_over(score, high_score):
 if __name__ == "__main__":
     high_score = load_high_score()
     main_menu(high_score)
+
